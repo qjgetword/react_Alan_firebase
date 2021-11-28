@@ -4,7 +4,17 @@ import { FiX } from "react-icons/fi";
 import { database } from "../firebase-config";
 
 export default function Todo({ databaseRef, update, setUpdate }: any) {
-  const [todoList, setTodoList] = useState<any>([]);
+  const fixture = [
+    {
+      item: "微信",
+      id: "weixin",
+    },
+    {
+      item: "QQ",
+      id: "tencent",
+    },
+  ];
+  const [todoList, setTodoList] = useState<any>(fixture);
 
   // const getData = async () => {
   //   const data = await getDocs(databaseRef);
@@ -15,9 +25,9 @@ export default function Todo({ databaseRef, update, setUpdate }: any) {
 
   const getData = useCallback(async () => {
     const data = await getDocs(databaseRef);
-    setTodoList(
-      data.docs.map((item: any) => ({ ...item.data(), id: item.id }))
-    );
+    // setTodoList(
+    //   data.docs.map((item: any) => ({ ...item.data(), id: item.id }))
+    // );
   }, [databaseRef]);
 
   useEffect(() => {
@@ -26,11 +36,17 @@ export default function Todo({ databaseRef, update, setUpdate }: any) {
   }, [update]);
 
   const deleteItems = (id: string) => {
-    console.log(id);
     const data = doc(database, "todo-list", id);
     deleteDoc(data).then(() => {
       getData();
     });
+  };
+
+  // 打开客户端
+  const openItems = (id: string) => {
+    console.log(id);
+
+    window.open(id + "://");
   };
 
   return (
@@ -41,7 +57,9 @@ export default function Todo({ databaseRef, update, setUpdate }: any) {
         {todoList.map((todo: any) => {
           return (
             <div className="todo-list" key={todo.id}>
-              <h3 className="todo-item">{todo.item}</h3>
+              <h3 className="todo-item" onClick={() => openItems(todo.id)}>
+                {todo.item}
+              </h3>
               <FiX
                 className="close-icon"
                 onClick={() => deleteItems(todo.id)}
