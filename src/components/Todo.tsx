@@ -1,17 +1,24 @@
 import { getDocs, doc, deleteDoc } from "@firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { database } from "../firebase-config";
 
 export default function Todo({ databaseRef, update, setUpdate }: any) {
   const [todoList, setTodoList] = useState<any>([]);
 
-  const getData = async () => {
+  // const getData = async () => {
+  //   const data = await getDocs(databaseRef);
+  //   setTodoList(
+  //     data.docs.map((item: any) => ({ ...item.data(), id: item.id }))
+  //   );
+  // };
+
+  const getData = useCallback(async () => {
     const data = await getDocs(databaseRef);
     setTodoList(
       data.docs.map((item: any) => ({ ...item.data(), id: item.id }))
     );
-  };
+  }, [databaseRef]);
 
   useEffect(() => {
     getData();
